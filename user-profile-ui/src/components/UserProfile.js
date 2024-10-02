@@ -8,7 +8,7 @@ const UserProfile = () => {
 
   const fetchProfile = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/user/${username}`);
+      const response = await axios.get(`http:///3.82.145.250:8000/user/${username}`);
       setProfile(response.data);
       setError("");
     } catch (error) {
@@ -16,6 +16,7 @@ const UserProfile = () => {
       setProfile(null);
     }
   };
+
 
   return (
     <div>

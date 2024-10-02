@@ -7,12 +7,13 @@ const RegisterUser = () => {
 
   const registerUser = async () => {
     try {
-      const response = await axios.post(`http://localhost:8000/user/${username}/register`);
+      const response = await axios.post(`http://3.82.145.250:8000/user/${username}/register`);
       setMessage(response.data.message);
     } catch (error) {
       setMessage(error.response.data.detail || "Error registering user");
     }
   };
+
 
   return (
     <div>
