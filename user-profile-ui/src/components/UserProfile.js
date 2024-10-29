@@ -10,7 +10,7 @@ const UserProfile = () => {
   // Fetch user profile from User Microservice
   const fetchProfile = async () => {
     try {
-      const response = await axios.get(`http://3.95.192.70:8000/user/${username}`);
+      const response = await axios.get(`http://54.173.208.182:8000/user/${username}`);
       setProfile(response.data);
       setError("");
 
