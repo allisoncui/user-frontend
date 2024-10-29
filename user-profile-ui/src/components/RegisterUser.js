@@ -7,7 +7,7 @@ const RegisterUser = () => {
 
   const registerUser = async () => {
     try {
-      const response = await axios.post(`http://54.173.208.182:8000/user/${username}/register`);
+      const response = await axios.post(`http://44.201.146.13:8000/user/${username}/register`);
       setMessage(response.data.message);
     } catch (error) {
       setMessage(error.response.data.detail || "Error registering user");
