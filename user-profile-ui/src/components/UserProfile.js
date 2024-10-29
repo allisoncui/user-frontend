@@ -29,7 +29,7 @@ const UserProfile = () => {
   // Fetch viewed restaurants from Restaurant Microservice
   const fetchViewedRestaurants = async (username) => {
     try {
-      const response = await axios.get(`http://3.83.128.235:8000/user/${username}/viewed_restaurants`);
+      const response = await axios.get(`http://54.173.208.182:8000/user/${username}/viewed_restaurants`);
       setViewedRestaurants(response.data.viewed_restaurants);
     } catch (error) {
       console.error("Error fetching viewed restaurants:", error);
