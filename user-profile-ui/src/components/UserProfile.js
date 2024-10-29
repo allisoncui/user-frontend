@@ -64,6 +64,8 @@ const UserProfile = () => {
               viewedRestaurants.map((restaurant) => (
                 <li key={restaurant.restaurant_code}>
                   {restaurant.name} (Code: {restaurant.restaurant_code})
+                  {/* Add the "View Availabilities" button */}
+                  <button style={{ marginLeft: '10px' }}>View Availabilities</button>
                 </li>
               ))
             ) : (
