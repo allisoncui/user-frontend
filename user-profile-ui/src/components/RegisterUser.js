@@ -7,7 +7,8 @@ const RegisterUser = () => {
 
   const registerUser = async () => {
     try {
-      const response = await axios.post(`http://44.201.146.13:8000/user/${username}/register`);
+      const userMicroserviceUrl = process.env.USER_MICROSERVICE_URL;
+      const response = await axios.get(`${userMicroserviceUrl}/user/${username}/register`);
       setMessage(response.data.message);
     } catch (error) {
       setMessage(error.response.data.detail || "Error registering user");

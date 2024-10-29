@@ -10,7 +10,8 @@ const UserProfile = () => {
   // Fetch user profile from User Microservice
   const fetchProfile = async () => {
     try {
-      const response = await axios.get(`http://44.201.146.13:8000/user/${username}`);
+      const userMicroserviceUrl = process.env.USER_MICROSERVICE_URL;
+      const response = await axios.get(`${userMicroserviceUrl}/user/${username}`);
       setProfile(response.data);
       setError("");
 
@@ -29,7 +30,8 @@ const UserProfile = () => {
   // Fetch viewed restaurants from Restaurant Microservice
   const fetchViewedRestaurants = async (username) => {
     try {
-      const response = await axios.get(`http://44.206.241.155:8000/user/${username}/viewed_restaurants`);
+      const restaurantMicroserviceUrl = process.env.RESTAURANT_MICROSERVICE_URL;
+      const response = await axios.get(`${restaurantMicroserviceUrl}/user/${username}/viewed_restaurants`);
       setViewedRestaurants(response.data.viewed_restaurants);
     } catch (error) {
       console.error("Error fetching viewed restaurants:", error);
