@@ -43,6 +43,10 @@ const UserProfile = () => {
     });
   };
 
+  const handleViewAllRestaurants = () => {
+    navigate("/all-restaurants");
+  };
+
   return (
     <div>
       <h2>Get User Profile</h2>
@@ -69,6 +73,10 @@ const UserProfile = () => {
               </li>
             ))}
           </ul>
+          {/* Render "View All Restaurants" button when the profile is fetched */}
+          <button onClick={handleViewAllRestaurants} style={{ marginTop: "20px" }}>
+            View All Restaurants
+          </button>
         </div>
       )}
 
