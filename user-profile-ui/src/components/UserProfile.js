@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
   const [username, setUsername] = useState("");
@@ -9,6 +10,8 @@ const UserProfile = () => {
   const [callbackUrl, setCallbackUrl] = useState("");
   const [availabilityData, setAvailabilityData] = useState(null);
   const [restaurantRating, setRestaurantRating] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("User Microservice URL:", process.env.REACT_APP_USER_MICROSERVICE_URL);
@@ -41,7 +44,19 @@ const UserProfile = () => {
     }
   };
 
-  // Separate function to fetch restaurant rating
+  // Fetch rating and availability concurrently
+  const viewAvailabilityAndRating = async (restaurant_code) => {
+    try {
+      await Promise.all([
+        fetchRestaurantRating(restaurant_code),
+        fetchAvailability(restaurant_code)
+      ]);
+    } catch (error) {
+      console.error("Error in concurrent fetch:", error);
+    }
+  };
+
+  // Fetch restaurant rating
   const fetchRestaurantRating = async (restaurant_code) => {
     try {
       const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
@@ -52,7 +67,7 @@ const UserProfile = () => {
     }
   };
 
-  // Separate function to fetch restaurant availability
+  // Fetch restaurant availability
   const fetchAvailability = async (restaurant_code) => {
     try {
       const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
@@ -79,6 +94,7 @@ const UserProfile = () => {
         if (response.data.status === "complete") {
           setAvailabilityData(response.data.data);
           clearInterval(intervalId);
+          navigate(`/availability/${encodeURIComponent(response.data.data.restaurant)}`);
         } else {
           console.log("Still processing, will check again...");
         }
@@ -89,24 +105,20 @@ const UserProfile = () => {
     }, 5000);
   };
 
-  // Event handler to fetch availability and rating concurrently
-  const viewAvailabilityAndRating = async (restaurant_code) => {
-    const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
-    const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
+  const handleViewAvailability = (restaurant) => {
+    viewAvailabilityAndRating(restaurant.restaurant_code);
 
-    console.log(`Fetching rating from: ${restaurantMicroserviceUrl}/restaurant/${restaurant_code}/rating`);
-    console.log(`Fetching availability from: ${availabilityMicroserviceUrl}/availability/${restaurant_code}`);
+    setTimeout(() => {
+      navigate(`/availability/${encodeURIComponent(restaurant.name)}`, {
+        state: { rating: restaurantRating },
+      });
+    }, 1000)
+  };
 
-  try {
-    await Promise.all([
-      fetchRestaurantRating(restaurant_code),
-      fetchAvailability(restaurant_code)
-    ]);
-  } catch (error) {
-    console.error("Error in concurrent fetch:", error);
-  }
-};
 
+  const navigateToAllRestaurants = () => {
+    navigate('/all-restaurants');
+  };
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
@@ -139,6 +151,7 @@ const UserProfile = () => {
         <div>
           <h3>Profile Info</h3>
           <p>Username: {profile.username}</p>
+          <button onClick={navigateToAllRestaurants}>Show All Available Restaurants</button>
           <p>Viewed Restaurants:</p>
           <ul>
             {viewedRestaurants.length > 0 ? (
@@ -147,7 +160,7 @@ const UserProfile = () => {
                   {restaurant.name} (Code: {restaurant.restaurant_code})
                   <button
                     style={{ marginLeft: "10px" }}
-                    onClick={() => viewAvailabilityAndRating(restaurant.restaurant_code)}
+                    onClick={() => handleViewAvailability(restaurant)}
                   >
                     View Availability and Rating
                   </button>
@@ -163,9 +176,7 @@ const UserProfile = () => {
       {availabilityData && (
         <div>
           <h3>Availability Data</h3>
-          <p>
-            {availabilityData.restaurant}: {availabilityData.date} at {availabilityData.time}
-          </p>
+          <p>{availabilityData.restaurant}: {availabilityData.date} at {availabilityData.time}</p>
         </div>
       )}
 

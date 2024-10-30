@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 const ViewAvailabilities = () => {
@@ -8,15 +8,21 @@ const ViewAvailabilities = () => {
   const [availability, setAvailability] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Retrieve the passed rating from navigation state
+  const restaurantRating = location.state?.rating || null;
 
   useEffect(() => {
-    const fetchAvailabilities = async () => {
+    const fetchAvailability = async () => {
       try {
         const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
-        const response = await axios.get(`${availabilityMicroserviceUrl}/availability/${decodedRestaurantName}`);
-        
-        if (response.data) {
-          setAvailability(response.data);  // Set the first available reservation
+        const availabilityResponse = await axios.get(
+          `${availabilityMicroserviceUrl}/availability/${decodedRestaurantName}`
+        );
+
+        if (availabilityResponse.data) {
+          setAvailability(availabilityResponse.data);
         } else {
           setError("No availability found.");
         }
@@ -25,8 +31,8 @@ const ViewAvailabilities = () => {
         setError("Error fetching availability data.");
       }
     };
-  
-    fetchAvailabilities();
+
+    fetchAvailability();
   }, [decodedRestaurantName]);
 
   const handleBackToHome = () => {
@@ -39,16 +45,28 @@ const ViewAvailabilities = () => {
 
       {error ? (
         <p style={{ color: "red" }}>{error}</p>
-      ) : availability ? (
-        <div>
-          <p>First available reservation for {availability.restaurant}</p>
-          <p>Date: {availability.date}</p>
-          <p>Time: {availability.time}</p>
-        </div>
       ) : (
-        <p>Loading availability...</p>
-      )}
+        <div>
+          {availability ? (
+            <div>
+              <p>First available reservation for {availability.restaurant}</p>
+              <p>Date: {availability.date}</p>
+              <p>Time: {availability.time}</p>
+            </div>
+          ) : (
+            <p>Loading availability...</p>
+          )}
 
+          {restaurantRating !== null ? (
+            <div>
+              <h3>Restaurant Rating</h3>
+              <p>Rating: {restaurantRating}</p>
+            </div>
+          ) : (
+            <p>Loading rating...</p>
+          )}
+        </div>
+      )}
 
       <button onClick={handleBackToHome}>Back to Home</button>
     </div>
