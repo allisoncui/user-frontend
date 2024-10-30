@@ -1,6 +1,7 @@
 import React from "react";
 import UserProfile from "./components/UserProfile";
 import RegisterUser from "./components/RegisterUser";
+import './App.css';
 
 function App() {
   return (
