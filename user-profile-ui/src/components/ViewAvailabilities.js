@@ -1,39 +1,67 @@
+// ViewAvailabilities.js
+
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ViewAvailabilities = () => {
-  const { restaurantName } = useParams();
-  const decodedRestaurantName = decodeURIComponent(restaurantName);
+  const location = useLocation();
+  const { restaurant } = location.state;
   const [availability, setAvailability] = useState(null);
+  const [restaurantRating, setRestaurantRating] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Retrieve the passed rating from navigation state
-  const restaurantRating = location.state?.rating || null;
 
   useEffect(() => {
-    const fetchAvailability = async () => {
-      try {
-        const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
-        const availabilityResponse = await axios.get(
-          `${availabilityMicroserviceUrl}/availability/${decodedRestaurantName}`
-        );
+    // Initiate availability check and get rating in parallel
+const fetchAvailabilityAndRating = async (restaurant_code) => {
+  try {
+    const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
+    const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
 
-        if (availabilityResponse.data) {
-          setAvailability(availabilityResponse.data);
-        } else {
-          setError("No availability found.");
-        }
-      } catch (error) {
-        console.error("Error fetching availabilities:", error);
-        setError("Error fetching availability data.");
+    // Start the availability check with a POST request
+    const initiateAvailabilityResponse = await axios.post(
+      `${availabilityMicroserviceUrl}/availability/${restaurant_code}`
+    );
+
+    const statusUrl = initiateAvailabilityResponse.headers.location;
+
+    // Run the rating request in parallel with polling for availability status
+    const [ratingResponse] = await Promise.all([
+      axios.get(`${restaurantMicroserviceUrl}/restaurant/${restaurant_code}/rating`),
+      pollAvailabilityStatus(statusUrl)
+    ]);
+
+    // Set rating
+    setRestaurantRating(ratingResponse.data.rating);
+
+  } catch (error) {
+    console.error("Error initiating availability or fetching rating:", error);
+    setError("Failed to retrieve availability or rating.");
+  }
+};
+
+// Polling function for availability status
+const pollAvailabilityStatus = async (statusUrl) => {
+  const intervalId = setInterval(async () => {
+    try {
+      const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
+      const response = await axios.get(`${availabilityMicroserviceUrl}${statusUrl}`);
+      if (response.data.status === "complete") {
+        setAvailability(response.data.data);
+        clearInterval(intervalId);
+      } else {
+        console.log("Still processing, will check again...");
       }
-    };
+    } catch (error) {
+      console.error("Error polling availability status:", error);
+      clearInterval(intervalId);
+    }
+  }, 5000); // Poll every 5 seconds
+};
 
-    fetchAvailability();
-  }, [decodedRestaurantName]);
+    fetchAvailabilityAndRating(restaurant.restaurant_code);
+  }, [restaurant]);
 
   const handleBackToHome = () => {
     navigate("/");
@@ -41,7 +69,7 @@ const ViewAvailabilities = () => {
 
   return (
     <div>
-      <h2>{decodedRestaurantName} Available Times</h2>
+      <h2>Available Times for {restaurant.name}:</h2>
 
       {error ? (
         <p style={{ color: "red" }}>{error}</p>
@@ -49,7 +77,7 @@ const ViewAvailabilities = () => {
         <div>
           {availability ? (
             <div>
-              <p>First available reservation for {availability.restaurant}</p>
+              <p>First available reservation:</p>
               <p>Date: {availability.date}</p>
               <p>Time: {availability.time}</p>
             </div>
