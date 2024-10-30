@@ -12,7 +12,7 @@ const UserProfile = () => {
     try {
       // const userMicroserviceUrl = process.env.REACT_APP_USER_MICROSERVICE_URL;
       // const response = await axios.get(`${userMicroserviceUrl}/user/${username}`);
-      const response = await axios.get(`http://44.201.146.13:8000/user/${username}`);
+      const response = await axios.get(`http://52.23.233.221:8000/user/${username}`);
       setProfile(response.data);
       setError("");
 
@@ -33,7 +33,7 @@ const UserProfile = () => {
     try {
       // const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
       // const response = await axios.get(`${restaurantMicroserviceUrl}/user/${username}/viewed_restaurants`);
-      const response = await axios.get(`http://44.206.241.155:8000/user/${username}/viewed_restaurants`);
+      const response = await axios.get(`http://34.207.95.163:8000/user/${username}/viewed_restaurants`);
       setViewedRestaurants(response.data.viewed_restaurants);
     } catch (error) {
       console.error("Error fetching viewed restaurants:", error);
