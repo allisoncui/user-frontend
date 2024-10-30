@@ -66,7 +66,7 @@ const UserProfile = () => {
     }
   };
 
-  // Original function: View availability for a specific restaurant
+  // Function to initiate availability check and start polling
   const viewAvailability = async (restaurantCode) => {
     try {
       const availabilityMicroserviceUrl =
@@ -86,7 +86,7 @@ const UserProfile = () => {
         console.log("Request accepted. Polling for results at:", statusUrl);
 
         if (!callbackUrl) {
-          pollAvailabilityStatus(statusUrl);
+          pollAvailabilityStatus(statusUrl); // Start polling
         }
       }
     } catch (error) {
@@ -102,6 +102,8 @@ const UserProfile = () => {
         if (response.data.status === "complete") {
           console.log("Availability data:", response.data.data);
           clearInterval(intervalId); // Stop polling when data is ready
+          // Navigate to the availability page once we have the data
+          navigate(`/availability/${encodeURIComponent(response.data.data.restaurant)}`);
         } else {
           console.log("Still processing, will check again...");
         }
