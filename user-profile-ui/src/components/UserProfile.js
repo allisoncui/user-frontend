@@ -112,13 +112,18 @@ const UserProfile = () => {
     }, 5000); // Poll every 5 seconds
   };
 
-  // New function: Handle View Availability button click
+  // Function to handle View Availability button click
   const handleViewAvailability = (restaurant) => {
     // Call the original viewAvailability function
     viewAvailability(restaurant.restaurant_code);
 
     // Navigate to the new page with the restaurant name
     navigate(`/availability/${encodeURIComponent(restaurant.name)}`);
+  };
+
+  // Function to navigate to AllRestaurants page
+  const navigateToAllRestaurants = () => {
+    navigate('/all-restaurants');
   };
 
   // Handle Enter key press for username input
@@ -154,6 +159,10 @@ const UserProfile = () => {
         <div>
           <h3>Profile Info</h3>
           <p>Username: {profile.username}</p>
+
+          {/* New Button to Show All Available Restaurants */}
+          <button onClick={navigateToAllRestaurants}>Show All Available Restaurants</button>
+
           <p>Viewed Restaurants:</p>
           <ul>
             {viewedRestaurants.length > 0 ? (
