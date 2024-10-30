@@ -1,24 +1,40 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 
 const UserProfile = () => {
+  // State variables
   const [username, setUsername] = useState("");
   const [profile, setProfile] = useState(null);
   const [viewedRestaurants, setViewedRestaurants] = useState([]);
   const [error, setError] = useState("");
-  const [callbackUrl, setCallbackUrl] = useState("")
+  const [callbackUrl, setCallbackUrl] = useState("");
 
-   useEffect(() => {
-    console.log("User Microservice URL:", process.env.REACT_APP_USER_MICROSERVICE_URL);
-    console.log("Restaurant Microservice URL:", process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL);
-    console.log("Availability Microservice URL:", process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL);
+  const navigate = useNavigate(); // Initialize navigate function
+
+  useEffect(() => {
+    console.log(
+      "User Microservice URL:",
+      process.env.REACT_APP_USER_MICROSERVICE_URL
+    );
+    console.log(
+      "Restaurant Microservice URL:",
+      process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL
+    );
+    console.log(
+      "Availability Microservice URL:",
+      process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL
+    );
   }, []);
 
   // Fetch user profile from User Microservice
   const fetchProfile = async () => {
     try {
-      const userMicroserviceUrl = process.env.REACT_APP_USER_MICROSERVICE_URL;
-      const response = await axios.get(`${userMicroserviceUrl}/user/${username}`);
+      const userMicroserviceUrl =
+        process.env.REACT_APP_USER_MICROSERVICE_URL;
+      const response = await axios.get(
+        `${userMicroserviceUrl}/user/${username}`
+      );
       setProfile(response.data);
       setError("");
 
@@ -38,8 +54,11 @@ const UserProfile = () => {
   // Fetch viewed restaurants from Restaurant Microservice
   const fetchViewedRestaurants = async (username) => {
     try {
-      const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
-      const response = await axios.get(`${restaurantMicroserviceUrl}/user/${username}/viewed_restaurants`);
+      const restaurantMicroserviceUrl =
+        process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
+      const response = await axios.get(
+        `${restaurantMicroserviceUrl}/user/${username}/viewed_restaurants`
+      );
       setViewedRestaurants(response.data.viewed_restaurants);
     } catch (error) {
       console.error("Error fetching viewed restaurants:", error);
@@ -47,10 +66,11 @@ const UserProfile = () => {
     }
   };
 
-  // View availability for a specific restaurant
+  // Original function: View availability for a specific restaurant
   const viewAvailability = async (restaurantCode) => {
     try {
-      const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
+      const availabilityMicroserviceUrl =
+        process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
       const payload = {
         callback_url: callbackUrl || undefined,
       };
@@ -92,6 +112,16 @@ const UserProfile = () => {
     }, 5000); // Poll every 5 seconds
   };
 
+  // New function: Handle View Availability button click
+  const handleViewAvailability = (restaurant) => {
+    // Call the original viewAvailability function
+    viewAvailability(restaurant.restaurant_code);
+
+    // Navigate to the new page with the restaurant name
+    navigate(`/availability/${encodeURIComponent(restaurant.name)}`);
+  };
+
+  // Handle Enter key press for username input
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       fetchProfile(); // Trigger the profile fetch if Enter is pressed
@@ -130,9 +160,10 @@ const UserProfile = () => {
               viewedRestaurants.map((restaurant) => (
                 <li key={restaurant.restaurant_code}>
                   {restaurant.name} (Code: {restaurant.restaurant_code})
+                  {/* Updated the existing button to perform both actions */}
                   <button
                     style={{ marginLeft: "10px" }}
-                    onClick={() => viewAvailability(restaurant.restaurant_code)}
+                    onClick={() => handleViewAvailability(restaurant)}
                   >
                     View Availabilities
                   </button>
