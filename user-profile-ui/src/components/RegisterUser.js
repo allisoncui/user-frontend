@@ -9,7 +9,11 @@ const RegisterUser = () => {
     try {
       const userMicroserviceUrl = process.env.REACT_APP_USER_MICROSERVICE_URL;
       const response = await axios.post(`${userMicroserviceUrl}/user/${username}/register`);
-      setMessage(response.data.message);
+      if (response.status === 201) {
+        setMessage("User registered successfully");
+      } else if (response.status === 200) {
+        setMessage("User already exists");
+      }
     } catch (error) {
       setMessage(error.response.data.detail || "Error registering user");
     }
