@@ -14,11 +14,18 @@ const RegisterUser = () => {
       } else if (response.status === 200) {
         setMessage("User already exists");
       }
+      setUsername("");
     } catch (error) {
       setMessage(error.response.data.detail || "Error registering user");
+      setUsername("");
     }
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      registerUser();
+    }
+  };
 
   return (
     <div>
@@ -28,6 +35,7 @@ const RegisterUser = () => {
         placeholder="Enter username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        onKeyPress={handleKeyPress}
       />
       <button onClick={registerUser}>Register</button>
       <p>{message}</p>

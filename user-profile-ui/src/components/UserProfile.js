@@ -22,6 +22,7 @@ const UserProfile = () => {
 
       // Fetch viewed restaurants after fetching the profile
       fetchViewedRestaurants(username);
+      setUsername("");
     } catch (error) {
       setError(
         error.response && error.response.data
@@ -29,6 +30,7 @@ const UserProfile = () => {
           : "User not found"
       );
       setProfile(null);
+      setUsername("");
     }
   };
 
@@ -44,6 +46,12 @@ const UserProfile = () => {
     }
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      fetchProfile(); // Trigger the profile fetch if Enter is pressed
+    }
+  };
+
   return (
     <div>
       <h2>Get User Profile</h2>
@@ -52,6 +60,7 @@ const UserProfile = () => {
         placeholder="Enter username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        onKeyPress={handleKeyPress}
       />
       <button onClick={fetchProfile}>Fetch Profile</button>
 
