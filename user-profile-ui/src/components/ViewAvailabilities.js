@@ -14,51 +14,62 @@ const ViewAvailabilities = () => {
 
   useEffect(() => {
     // Initiate availability check and get rating in parallel
-const fetchAvailabilityAndRating = async (restaurant_code) => {
-  try {
-    const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
-    const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
+    const fetchAvailabilityAndRating = async (restaurant_code) => {
+      try {
+        const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
+        const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
 
-    // Start the availability check with a POST request
-    const initiateAvailabilityResponse = await axios.post(
-      `${availabilityMicroserviceUrl}/availability/${restaurant_code}`
-    );
+        // Start the availability check with a POST request
+        const initiateAvailabilityResponse = await axios.post(
+          `${availabilityMicroserviceUrl}/availability/${restaurant_code}`
+        );
+
+        const statusUrl = initiateAvailabilityResponse.headers.location;
+
+        // Run the rating request in parallel with polling for availability status
+        const [ratingResponse] = await Promise.all([
+          axios.get(`${restaurantMicroserviceUrl}/restaurant/${restaurant_code}/rating`),
+          pollAvailabilityStatus(statusUrl)
+        ]);
+
+        // Set rating
+        setRestaurantRating(ratingResponse.data.rating);
+
+      } catch (error) {
+        console.error("Error initiating availability or fetching rating:", error);
+        setError("Failed to retrieve availability or rating.");
+      }
+    };
 
     const statusUrl = initiateAvailabilityResponse.headers.location;
 
-    // Run the rating request in parallel with polling for availability status
-    const [ratingResponse] = await Promise.all([
-      axios.get(`${restaurantMicroserviceUrl}/restaurant/${restaurant_code}/rating`),
-      pollAvailabilityStatus(statusUrl)
-    ]);
-
-    // Set rating
-    setRestaurantRating(ratingResponse.data.rating);
-
-  } catch (error) {
-    console.error("Error initiating availability or fetching rating:", error);
-    setError("Failed to retrieve availability or rating.");
-  }
-};
-
-// Polling function for availability status
-const pollAvailabilityStatus = async (statusUrl) => {
-  const intervalId = setInterval(async () => {
-    try {
-      const response = await axios.get(statusUrl);
-      
-      if (response.data.status === "complete") {
-        setAvailability(response.data.data);
-        clearInterval(intervalId);
-      } else {
-        console.log("Still processing, will check again...");
-      }
-    } catch (error) {
-      console.error("Error polling availability status:", error);
-      clearInterval(intervalId);
+    // Check if statusUrl is defined
+    if (!statusUrl) {
+      console.error("Error: 'location' header is missing in the response.");
+      setError("Failed to retrieve the availability status URL.");
+      return;
     }
-  }, 5000); // Poll every 5 seconds
-};
+
+    const fullStatusUrl = `${availabilityMicroserviceUrl}${statusUrl}`;
+
+    const pollAvailabilityStatus = async (fullStatusUrl) => {
+      const intervalId = setInterval(async () => {
+        try {
+          const response = await axios.get(fullStatusUrl);
+
+          if (response.data.status === "complete") {
+            setAvailability(response.data.data);
+            clearInterval(intervalId);
+          } else {
+            console.log("Still processing, will check again...");
+          }
+        } catch (error) {
+          console.error("Error polling availability status:", error);
+          clearInterval(intervalId);
+        }
+      }, 5000); // Poll every 5 seconds
+    };
+
 
     fetchAvailabilityAndRating(restaurant.restaurant_code);
   }, [restaurant]);
