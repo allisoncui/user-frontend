@@ -13,45 +13,7 @@ const ViewAvailabilities = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Initiate availability check and get rating in parallel
-    const fetchAvailabilityAndRating = async (restaurant_code) => {
-      try {
-        const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
-        const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
-
-        // Start the availability check with a POST request
-        const initiateAvailabilityResponse = await axios.post(
-          `${availabilityMicroserviceUrl}/availability/${restaurant_code}`
-        );
-
-        const statusUrl = initiateAvailabilityResponse.headers.location;
-
-        // Run the rating request in parallel with polling for availability status
-        const [ratingResponse] = await Promise.all([
-          axios.get(`${restaurantMicroserviceUrl}/restaurant/${restaurant_code}/rating`),
-          pollAvailabilityStatus(statusUrl)
-        ]);
-
-        // Set rating
-        setRestaurantRating(ratingResponse.data.rating);
-
-      } catch (error) {
-        console.error("Error initiating availability or fetching rating:", error);
-        setError("Failed to retrieve availability or rating.");
-      }
-    };
-
-    const statusUrl = initiateAvailabilityResponse.headers.location;
-
-    // Check if statusUrl is defined
-    if (!statusUrl) {
-      console.error("Error: 'location' header is missing in the response.");
-      setError("Failed to retrieve the availability status URL.");
-      return;
-    }
-
-    const fullStatusUrl = `${availabilityMicroserviceUrl}${statusUrl}`;
-
+    // Polling function for availability status
     const pollAvailabilityStatus = async (fullStatusUrl) => {
       const intervalId = setInterval(async () => {
         try {
@@ -70,6 +32,42 @@ const ViewAvailabilities = () => {
       }, 5000); // Poll every 5 seconds
     };
 
+    // Initiate availability check and get rating in parallel
+    const fetchAvailabilityAndRating = async (restaurant_code) => {
+      try {
+        const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
+        const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
+
+        // Start the availability check with a POST request
+        const initiateAvailabilityResponse = await axios.post(
+          `${availabilityMicroserviceUrl}/availability/${restaurant_code}`
+        );
+
+        const statusUrl = initiateAvailabilityResponse.headers.location;
+
+        // Check if statusUrl is defined
+        if (!statusUrl) {
+          console.error("Error: 'location' header is missing in the response.");
+          setError("Failed to retrieve the availability status URL.");
+          return;
+        }
+
+        const fullStatusUrl = `${availabilityMicroserviceUrl}${statusUrl}`;
+
+        // Run the rating request in parallel with polling for availability status
+        const [ratingResponse] = await Promise.all([
+          axios.get(`${restaurantMicroserviceUrl}/restaurant/${restaurant_code}/rating`),
+          pollAvailabilityStatus(fullStatusUrl)
+        ]);
+
+        // Set rating
+        setRestaurantRating(ratingResponse.data.rating);
+
+      } catch (error) {
+        console.error("Error initiating availability or fetching rating:", error);
+        setError("Failed to retrieve availability or rating.");
+      }
+    };
 
     fetchAvailabilityAndRating(restaurant.restaurant_code);
   }, [restaurant]);
