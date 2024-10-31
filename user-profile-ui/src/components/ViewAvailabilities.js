@@ -45,8 +45,8 @@ const fetchAvailabilityAndRating = async (restaurant_code) => {
 const pollAvailabilityStatus = async (statusUrl) => {
   const intervalId = setInterval(async () => {
     try {
-      const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
-      const response = await axios.get(`${availabilityMicroserviceUrl}${statusUrl}`);
+      const response = await axios.get(statusUrl);
+      
       if (response.data.status === "complete") {
         setAvailability(response.data.data);
         clearInterval(intervalId);
