@@ -1,6 +1,6 @@
 // UserProfile.js
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -37,6 +37,15 @@ const UserProfile = () => {
     }
   };
 
+  useEffect(() => {
+    if (profile && viewedRestaurants.length > 0) {
+      navigate(`/profile/${encodeURIComponent(username)}`, {
+        state: { profile, viewedRestaurants },
+      });
+    }
+  }, [profile, viewedRestaurants, navigate, username]);
+
+  /*
   const handleViewAvailability = (restaurant) => {
     navigate(`/availability/${encodeURIComponent(restaurant.name)}`, {
       state: { restaurant: restaurant }
@@ -46,7 +55,7 @@ const UserProfile = () => {
   const handleViewAllRestaurants = () => {
     navigate("/all-restaurants", { state: { username } });
   };
-
+  */
 
   return (
     <div>
@@ -60,6 +69,9 @@ const UserProfile = () => {
       />
       <button onClick={fetchProfile}>Fetch Profile</button>
 
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {/*
       {profile && (
         <div>
           <h3>Profile Info</h3>
@@ -75,14 +87,12 @@ const UserProfile = () => {
               </li>
             ))}
           </ul>
-          {/* Render "View All Restaurants" button when the profile is fetched */}
+            
           <button onClick={handleViewAllRestaurants} style={{ marginTop: "20px" }}>
             View All Restaurants
           </button>
         </div>
-      )}
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
+            )} */}
     </div>
   );
 };

@@ -5,6 +5,7 @@ import RegisterUser from "./components/RegisterUser";
 import ViewAvailabilities from "./components/ViewAvailabilities";
 import AllRestaurants from "./components/AllRestaurants";
 import AuthCallback from "./components/AuthCallback";
+import ProfileDetails from "./components/ProfileDetails";
 import './App.css';
 
 function App() {
@@ -26,6 +27,12 @@ function App() {
                 <UserProfile />
               </>
             }
+          />
+
+          {/* Profile Details Route */}
+          <Route
+            path="/profile/:username"
+            element={<ProfileDetails />}
           />
 
           {/* ViewAvailabilities Route */}
