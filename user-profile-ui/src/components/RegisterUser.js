@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import '../App.css';
+import googleLogo from "../Google-Logo.svg";
 
 const RegisterUser = () => {
   const [username, setUsername] = useState("");
@@ -28,8 +30,9 @@ const RegisterUser = () => {
   return (
     <div>
       {/* <h2>Register User</h2> */}
-      <button onClick={handleGoogleLogin} style={{ marginLeft: "10px" }}>
-        Register with Google
+      <button onClick={handleGoogleLogin} className="google-button">
+      <img src={googleLogo} alt="Google logo" className="google-logo" />
+      <span className="google-button-text">Register with Google</span>
       </button>
       <div style={{ paddingTop: '20px' }}>
         <h3>Register New User</h3>
