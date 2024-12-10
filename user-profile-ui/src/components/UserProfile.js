@@ -59,7 +59,7 @@ const UserProfile = () => {
 
   return (
     <div>
-      <h3>Get Existing User Profile</h3>
+      <h3>Find User</h3>
       <input
         type="text"
         placeholder="Enter username"
