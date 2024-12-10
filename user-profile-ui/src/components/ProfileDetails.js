@@ -122,15 +122,20 @@ const ProfileDetails = () => {
                   <strong>{restaurant.name}</strong>
                 </div>
                 <div className="restaurant-details">
-                  {restaurantDetails[restaurant.restaurant_code]?.availability ? (
+                {restaurantDetails[restaurant.restaurant_code]?.availability ? (
+                  restaurantDetails[restaurant.restaurant_code].availability.date &&
+                  restaurantDetails[restaurant.restaurant_code].availability.time ? (
                     <div>
                       <p><strong>First available reservation:</strong></p>
                       <p>Date: {restaurantDetails[restaurant.restaurant_code].availability.date}</p>
                       <p>Time: {restaurantDetails[restaurant.restaurant_code].availability.time}</p>
                     </div>
                   ) : (
-                    <p className="loading-text">Loading availability...</p>
-                  )}
+                    <p>No reservations available</p>
+                  )
+                ) : (
+                  <p className="loading-text">Loading availability...</p>
+                )}
 
                   {restaurantDetails[restaurant.restaurant_code]?.rating !== undefined ? (
                     <div>
