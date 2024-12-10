@@ -1,0 +1,19 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm install
+    build:
+      commands:
+        - echo "REACT_APP_USER_MICROSERVICE_URL=$REACT_APP_USER_MICROSERVICE_URL" >> .env
+        - echo "REACT_APP_RESTAURANT_MICROSERVICE_URL=$REACT_APP_RESTAURANT_MICROSERVICE_URL" >> .env
+        - echo "REACT_APP_AVAILABILITY_MICROSERVICE_URL=$REACT_APP_AVAILABILITY_MICROSERVICE_URL" >> .env
+        - npm run build
+  artifacts:
+    baseDirectory: build
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
