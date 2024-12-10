@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useLocation, useNavigate } from "react-router-dom";
 import AllRestaurants from "./AllRestaurants";
 import axios from "axios";
 import "../ProfileDetails.css";
 
 const ProfileDetails = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Initialize navigate
-  const { profile, viewedRestaurants } = location.state || {};
+  const navigate = useNavigate();
+  const { profile } = location.state || {};
+  const [viewedRestaurants, setViewedRestaurants] = useState([]);
   const [restaurantDetails, setRestaurantDetails] = useState({});
+
+  const fetchViewedRestaurants = async (username) => {
+    try {
+      const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
+      const response = await axios.get(`${restaurantMicroserviceUrl}/user/${username}/viewed_restaurants`);
+      setViewedRestaurants(response.data.viewed_restaurants || []); // Update state with fetched data
+    } catch (error) {
+      console.error("Error fetching viewed restaurants:", error);
+    }
+  };
 
   const fetchAvailabilityAndRating = async (restaurant) => {
     try {
@@ -29,9 +40,7 @@ const ProfileDetails = () => {
       const availabilityData = await new Promise((resolve, reject) => {
         const intervalId = setInterval(async () => {
           try {
-            console.log(availabilityResponse)
             const response = await axios.get(`${statusUrl}`);
-
             if (response.data.status === "complete") {
               clearInterval(intervalId);
               resolve(response.data.data);
@@ -60,7 +69,20 @@ const ProfileDetails = () => {
   };
 
   useEffect(() => {
-    if (viewedRestaurants) {
+    if (profile?.username) {
+      fetchViewedRestaurants(profile.username);
+
+      // Set up a periodic fetch to update viewedRestaurants
+      const intervalId = setInterval(() => {
+        fetchViewedRestaurants(profile.username);
+      }, 5000); // Fetch every 10 seconds
+
+      return () => clearInterval(intervalId); // Clear interval on component unmount
+    }
+  }, [profile?.username]);
+
+  useEffect(() => {
+    if (viewedRestaurants.length > 0) {
       const fetchDetails = async () => {
         const details = {};
         for (const restaurant of viewedRestaurants) {
@@ -79,7 +101,7 @@ const ProfileDetails = () => {
         <h2 className="profile-details-header">{profile?.username || "User"}'s Profile</h2>
         <button
           className="back-to-home-button"
-          onClick={() => navigate("/")} // Navigate to home page
+          onClick={() => navigate("/")}
         >
           Back to Home
         </button>
