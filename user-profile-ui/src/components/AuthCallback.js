@@ -7,12 +7,13 @@ const AuthCallback = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
+    const username = params.get("username");
 
-    if (token) {
+    if (token && username) {
       localStorage.setItem("authToken", token); // Store token securely
-      navigate("/"); // Redirect to profile page
+      navigate(`/profile/${username}`); // Redirect to profile page with username
     } else {
-      console.error("Token missing in callback");
+      console.error("Token or username missing in callback");
     }
   }, [navigate]);
 

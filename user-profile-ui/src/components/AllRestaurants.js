@@ -10,7 +10,7 @@ const AllRestaurants = ({ username }) => {
   // List of restaurants and their codes
   const restaurants = [
     { name: 'Seoul Salon', code: '69593' },
-    { name: 'Tatiana by Kwame Onuachi', code: '65452' },
+    { name: 'Tatiana by Kwame Onwuachi', code: '65452' },
     { name: 'Torrisi', code: '64593' },
     { name: 'Double Chicken Please', code: '42534' },
     { name: 'Thirteen Water', code: '59903' },

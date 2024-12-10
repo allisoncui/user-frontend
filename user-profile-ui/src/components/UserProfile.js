@@ -30,7 +30,8 @@ const UserProfile = () => {
     try {
       const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
       const response = await axios.get(`${restaurantMicroserviceUrl}/user/${username}/viewed_restaurants`);
-      setViewedRestaurants(response.data.viewed_restaurants);
+      const data = response.data.viewed_restaurants || [];
+      setViewedRestaurants(data);
     } catch (error) {
       console.error("Error fetching viewed restaurants:", error);
       setViewedRestaurants([]);
@@ -38,11 +39,16 @@ const UserProfile = () => {
   };
 
   useEffect(() => {
-    if (profile && viewedRestaurants.length > 0) {
-      navigate(`/profile/${encodeURIComponent(username)}`, {
-        state: { profile, viewedRestaurants },
-      });
-    }
+  if (profile) {
+    console.log("Profile fetched:", profile);
+
+    // Redirect to the profile page even if viewed_restaurants is empty
+    navigate(`/profile/${encodeURIComponent(username)}`, {
+      state: { profile, viewedRestaurants },
+    });
+  } else {
+    console.log("No profile data available.");
+  }
   }, [profile, viewedRestaurants, navigate, username]);
 
   /*
