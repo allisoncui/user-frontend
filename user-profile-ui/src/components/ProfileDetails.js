@@ -19,7 +19,7 @@ const ProfileDetails = () => {
         `${availabilityMicroserviceUrl}/availability/${restaurant.restaurant_code}`
       );
 
-      const statusUrl = availabilityResponse.headers.location;
+      const statusUrl = availabilityResponse.data._links.status;
 
       if (!statusUrl) {
         console.error("Error: 'location' header is missing in the response.");
@@ -29,7 +29,8 @@ const ProfileDetails = () => {
       const availabilityData = await new Promise((resolve, reject) => {
         const intervalId = setInterval(async () => {
           try {
-            const response = await axios.get(`${availabilityMicroserviceUrl}${statusUrl}`);
+            console.log(availabilityResponse)
+            const response = await axios.get(`${statusUrl}`);
 
             if (response.data.status === "complete") {
               clearInterval(intervalId);
