@@ -119,7 +119,7 @@ const ProfileDetails = () => {
             {viewedRestaurants?.map((restaurant) => (
               <li key={restaurant.restaurant_code} className="viewed-restaurant-item">
                 <div>
-                  <strong>{restaurant.name}</strong> (Code: {restaurant.restaurant_code})
+                  <strong>{restaurant.name}</strong>
                 </div>
                 <div className="restaurant-details">
                   {restaurantDetails[restaurant.restaurant_code]?.availability ? (
