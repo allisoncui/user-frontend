@@ -50,12 +50,13 @@ const UserProfile = () => {
 
   return (
     <div>
-      <h2>Get User Profile</h2>
+      <h3>Get Existing User Profile</h3>
       <input
         type="text"
         placeholder="Enter username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        style={{ marginRight: '12px' }}
       />
       <button onClick={fetchProfile}>Fetch Profile</button>
 

@@ -27,20 +27,24 @@ const RegisterUser = () => {
 
   return (
     <div>
-      <h2>Register User</h2>
-      <div>
-        <label>Username: </label>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-      <button onClick={registerUser}>Register</button>
+      {/* <h2>Register User</h2> */}
       <button onClick={handleGoogleLogin} style={{ marginLeft: "10px" }}>
         Register with Google
       </button>
-      {message && <p>{message}</p>}
+      <div style={{ paddingTop: '20px' }}>
+        <h3>Register New User</h3>
+        {/* <label>Username: </label> */}
+        <input
+          type="text"
+          placeholder="Enter new username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          style={{ marginRight: '12px' }}
+        />
+        <button onClick={registerUser}>Register</button>
+        {message && <p>{message}</p>}
+      </div>
+
     </div>
   );
 };
