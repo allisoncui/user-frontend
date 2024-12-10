@@ -1,0 +1,53 @@
+/* ProfileDetails.css */
+
+.profile-details-container {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 4%;
+    padding-bottom: 4%;
+  }
+  
+  .profile-details-header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: left; /* Aligns the username's Profile header to the left */
+  }
+  
+  .profile-details-columns {
+    display: flex;
+    gap: 100px;
+  }
+  
+  .profile-column {
+    text-align: left;
+  }
+  
+  .viewed-restaurants-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .viewed-restaurant-item {
+    margin-bottom: 20px;
+    border: 1px solid #b3b3b3;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
+    padding-right: 48px;
+    border-radius: 8px;
+    background-color: #fbfbfb;
+  }
+  
+  .restaurant-details {
+    margin-left: 20px;
+    margin-top: 10px;
+  }
+  
+  .loading-text {
+    font-style: italic;
+  }
+  
+  .error-text {
+    color: red;
+  }

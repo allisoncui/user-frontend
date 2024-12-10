@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+// import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const AllRestaurants = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { username } = location.state || {};
+const AllRestaurants = ({ username }) => {
+  // const navigate = useNavigate();
+  // const location = useLocation();
+  // const { username } = location.state || {};
 
   // List of restaurants and their codes
   const restaurants = [
@@ -83,63 +83,51 @@ const AllRestaurants = () => {
     if (username) {
       fetchViewedRestaurants();
     }
-  }, [username, fetchViewedRestaurants]); // Include fetchViewedRestaurants as a dependency
+  }, [username, fetchViewedRestaurants]);
 
   // Handle checkbox change event
   const handleCheckboxChange = async (code) => {
-  const isSelected = selectedRestaurants.includes(code);
-  const updatedRestaurants = isSelected
-    ? selectedRestaurants.filter((c) => c !== code) // Remove if unchecked
-    : [...selectedRestaurants, code]; // Add if checked
+    const isSelected = selectedRestaurants.includes(code);
+    const updatedRestaurants = isSelected
+      ? selectedRestaurants.filter((c) => c !== code)
+      : [...selectedRestaurants, code];
 
-  setSelectedRestaurants(updatedRestaurants);
+    setSelectedRestaurants(updatedRestaurants);
 
-  try {
-    const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
-    const url = `${restaurantMicroserviceUrl}/user/${username}/viewed_restaurant?restaurant_code=${code}`;
+    try {
+      const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
+      const url = `${restaurantMicroserviceUrl}/user/${username}/viewed_restaurant?restaurant_code=${code}`;
 
-    if (isSelected) {
-      // If the checkbox was unchecked, send a DELETE request
-      await axios.delete(url);
-    } else {
-      // If the checkbox was checked, send a POST request
-      await axios.post(url);
+      if (isSelected) {
+        await axios.delete(url);
+      } else {
+        await axios.post(url);
+      }
+    } catch (error) {
+      console.error("Error updating viewed restaurants:", error.response?.data || error.message);
     }
-  } catch (error) {
-    console.error("Error updating viewed restaurants:", error.response?.data || error.message);
-  }
-};
-
-
-  const handleReturnToHome = () => {
-    navigate("/");
   };
+
+  if (!username) {
+    return <p style={{ color: "red" }}>No username provided. Please log in first.</p>;
+  }
 
   return (
     <div>
-      <h2>All Available Restaurants</h2>
-      {username ? (
-        <>
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            {restaurants.map((restaurant) => (
-              <div key={restaurant.code} style={{ display: "flex", alignItems: "center" }}>
-                <span>{restaurant.name}</span>
-                <input
-                  type="checkbox"
-                  style={{ marginLeft: "10px" }}
-                  checked={selectedRestaurants.includes(Number(restaurant.code))}
-                  onChange={() => handleCheckboxChange(Number(restaurant.code))}
-                />
-              </div>
-            ))}
+      <h3>All Available Restaurants</h3>
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        {restaurants.map((restaurant) => (
+          <div key={restaurant.code} style={{ display: "flex", alignItems: "center" }}>
+            <span>{restaurant.name}</span>
+            <input
+              type="checkbox"
+              style={{ marginLeft: "10px" }}
+              checked={selectedRestaurants.includes(Number(restaurant.code))}
+              onChange={() => handleCheckboxChange(Number(restaurant.code))}
+            />
           </div>
-          <button style={{ marginTop: "20px" }} onClick={handleReturnToHome}>
-            Return to Home
-          </button>
-        </>
-      ) : (
-        <p style={{ color: "red" }}>No username provided. Please log in first.</p>
-      )}
+        ))}
+      </div>
     </div>
   );
 };
