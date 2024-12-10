@@ -14,31 +14,33 @@ const RegisterUser = () => {
       } else if (response.status === 200) {
         setMessage("User already exists");
       }
-      setUsername("");
     } catch (error) {
       setMessage(error.response.data.detail || "Error registering user");
       setUsername("");
     }
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      registerUser();
-    }
+  const handleGoogleLogin = () => {
+    // Redirects to the backend's Google login endpoint
+    window.location.href = 'http://localhost:8000/login/google';
   };
 
   return (
     <div>
       <h2>Register User</h2>
-      <input
-        type="text"
-        placeholder="Enter username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        onKeyPress={handleKeyPress}
-      />
+      <div>
+        <label>Username: </label>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </div>
       <button onClick={registerUser}>Register</button>
-      <p>{message}</p>
+      <button onClick={handleGoogleLogin} style={{ marginLeft: "10px" }}>
+        Register with Google
+      </button>
+      {message && <p>{message}</p>}
     </div>
   );
 };

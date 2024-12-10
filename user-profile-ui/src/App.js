@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import UserProfile from "./components/UserProfile";
 import RegisterUser from "./components/RegisterUser";
 import ViewAvailabilities from "./components/ViewAvailabilities";
-import AllRestaurants from "./components/AllRestaurants"; // Import the new component
+import AllRestaurants from "./components/AllRestaurants";
+import AuthCallback from "./components/AuthCallback";
 import './App.css';
 
 function App() {
@@ -34,6 +35,8 @@ function App() {
             path="/all-restaurants"
             element={<AllRestaurants />}
           />
+
+          <Route path="/auth/callback" element={<AuthCallback />} />
         </Routes>
       </div>
     </Router>
