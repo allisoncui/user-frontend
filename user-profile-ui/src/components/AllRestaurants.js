@@ -98,7 +98,7 @@ const AllRestaurants = ({ username }) => {
 
     try {
       const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
-      const url = `${restaurantMicroserviceUrl}/user/${username}/viewed_restaurant?restaurant_code=${code}`;
+      const url = `${restaurantMicroserviceUrl}/user/${username}/viewed_restaurants?restaurant_code=${code}`;
 
       if (isSelected) {
         await axios.delete(url);
