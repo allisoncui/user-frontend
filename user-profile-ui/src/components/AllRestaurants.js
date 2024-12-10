@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 // import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../ProfileDetails.css";
 
 const AllRestaurants = ({ username }) => {
   // const navigate = useNavigate();
@@ -155,22 +156,22 @@ const AllRestaurants = ({ username }) => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 mb-4">
-        {currentRestaurants.map((restaurant) => (
-          <div key={restaurant.code} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-            <span className="font-medium">{restaurant.name}</span>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Code: {restaurant.code}</span>
-              <input
-                type="checkbox"
-                className="w-4 h-4"
-                checked={selectedRestaurants.includes(Number(restaurant.code))}
-                onChange={() => handleCheckboxChange(Number(restaurant.code))}
-              />
-            </div>
+      <div className="all-restaurants-container">
+      {restaurants.map((restaurant) => (
+        <div key={restaurant.code} className="restaurant-item">
+          <div className="restaurant-details">
+            <span className="restaurant-name">{restaurant.name}</span>
+            <span className="restaurant-code">Code: {restaurant.code}</span>
           </div>
-        ))}
-      </div>
+          <input
+            type="checkbox"
+            className="restaurant-checkbox"
+            checked={selectedRestaurants.includes(Number(restaurant.code))}
+            onChange={() => handleCheckboxChange(Number(restaurant.code))}
+          />
+        </div>
+      ))}
+    </div>
 
       <div className="flex justify-center gap-2">
         <button

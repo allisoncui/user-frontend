@@ -52,3 +52,38 @@
   .error-text {
     color: red;
   }
+
+  .all-restaurants-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between restaurant entries */
+  }
+  
+  .restaurant-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd; /* Optional: Adds a separator */
+    padding-bottom: 10px; /* Space below each entry */
+  }
+  
+  .restaurant-details {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0; /* Removes left padding from details */
+    margin-left: 0; /* Ensures no extra margin */
+  }
+  
+  .restaurant-name {
+    font-weight: bold;
+    margin-bottom: 5px; /* Space between name and code */
+  }
+  
+  .restaurant-code {
+    font-size: 0.9em; /* Slightly smaller font for the code */
+    color: #666; /* Optional: Light gray color for the code */
+  }
+  
+  .restaurant-checkbox {
+    margin-left: 15px; /* Space between the details and the checkbox */
+  }
