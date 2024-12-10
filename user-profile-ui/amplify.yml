@@ -1,10 +1,10 @@
 version: 1
 applications:
-  - frontend:
+  - appRoot: user-profile-ui
+    frontend:
       phases:
         preBuild:
           commands:
-            - cd user-profile-ui
             - npm ci
         build:
           commands:
@@ -13,9 +13,9 @@ applications:
             - echo "REACT_APP_AVAILABILITY_MICROSERVICE_URL=$REACT_APP_AVAILABILITY_MICROSERVICE_URL" >> .env
             - npm run build
       artifacts:
-        baseDirectory: user-profile-ui/build
+        baseDirectory: build
         files:
           - '**/*'
       cache:
         paths:
-          - user-profile-ui/node_modules/**/*
+          - node_modules/**/*
