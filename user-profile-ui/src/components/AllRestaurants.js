@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AllRestaurants = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { username } = location.state || {};
 
   // List of restaurants and their codes
   const restaurants = [
@@ -65,43 +68,81 @@ const AllRestaurants = () => {
 
   const [selectedRestaurants, setSelectedRestaurants] = useState([]);
 
-  // Handle checkbox change event
-  const handleCheckboxChange = (code) => {
-    setSelectedRestaurants((prevSelected) =>
-      prevSelected.includes(code)
-        ? prevSelected.filter((c) => c !== code) // Uncheck
-        : [...prevSelected, code] // Check
-    );
-  };
+  const fetchViewedRestaurants = useCallback(async () => {
+    try {
+      const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
+      const response = await axios.get(`${restaurantMicroserviceUrl}/user/${username}/viewed_restaurants`);
+      const viewedCodes = response.data.viewed_restaurants.map((r) => r.restaurant_code);
+      setSelectedRestaurants(viewedCodes);
+    } catch (error) {
+      console.error("Failed to fetch viewed restaurants:", error);
+    }
+  }, [username]);
 
-  // Function to navigate back to home
+  useEffect(() => {
+    if (username) {
+      fetchViewedRestaurants();
+    }
+  }, [username, fetchViewedRestaurants]); // Include fetchViewedRestaurants as a dependency
+
+  // Handle checkbox change event
+  const handleCheckboxChange = async (code) => {
+  const isSelected = selectedRestaurants.includes(code);
+  const updatedRestaurants = isSelected
+    ? selectedRestaurants.filter((c) => c !== code) // Remove if unchecked
+    : [...selectedRestaurants, code]; // Add if checked
+
+  setSelectedRestaurants(updatedRestaurants);
+
+  try {
+    const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
+    const url = `${restaurantMicroserviceUrl}/user/${username}/viewed_restaurant?restaurant_code=${code}`;
+
+    if (isSelected) {
+      // If the checkbox was unchecked, send a DELETE request
+      await axios.delete(url);
+    } else {
+      // If the checkbox was checked, send a POST request
+      await axios.post(url);
+    }
+  } catch (error) {
+    console.error("Error updating viewed restaurants:", error.response?.data || error.message);
+  }
+};
+
+
   const handleReturnToHome = () => {
-    navigate('/');
+    navigate("/");
   };
 
   return (
     <div>
       <h2>All Available Restaurants</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        {restaurants.map((restaurant) => (
-          <div key={restaurant.code} style={{ display: 'flex', alignItems: 'center' }}>
-            <span>{restaurant.name}</span>
-            <input
-              type="checkbox"
-              style={{ marginLeft: '10px' }}
-              checked={selectedRestaurants.includes(restaurant.code)}
-              onChange={() => handleCheckboxChange(restaurant.code)}
-            />
+      {username ? (
+        <>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {restaurants.map((restaurant) => (
+              <div key={restaurant.code} style={{ display: "flex", alignItems: "center" }}>
+                <span>{restaurant.name}</span>
+                <input
+                  type="checkbox"
+                  style={{ marginLeft: "10px" }}
+                  checked={selectedRestaurants.includes(Number(restaurant.code))}
+                  onChange={() => handleCheckboxChange(Number(restaurant.code))}
+                />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-
-      {/* Return to Home Button */}
-      <button style={{ marginTop: '20px' }} onClick={handleReturnToHome}>
-        Return to Home
-      </button>
+          <button style={{ marginTop: "20px" }} onClick={handleReturnToHome}>
+            Return to Home
+          </button>
+        </>
+      ) : (
+        <p style={{ color: "red" }}>No username provided. Please log in first.</p>
+      )}
     </div>
   );
 };
 
 export default AllRestaurants;
+

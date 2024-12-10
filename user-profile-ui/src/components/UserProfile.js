@@ -44,8 +44,9 @@ const UserProfile = () => {
   };
 
   const handleViewAllRestaurants = () => {
-    navigate("/all-restaurants");
+    navigate("/all-restaurants", { state: { username } });
   };
+
 
   return (
     <div>
