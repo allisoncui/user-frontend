@@ -33,3 +33,34 @@ p {
   padding-top: 20px;
   padding-bottom: 36px;
 }
+
+.google-button {
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+  gap: 4px; /* Adds spacing between the logo and text */
+  padding: 10px 28px;
+  background-color: white;
+  border: 1px solid #666;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 32px;
+  font-weight: 600;
+}
+
+.google-button:hover {
+  background-color: #f5f5f5;
+}
+
+.google-logo {
+  width: 40px; /* Set the desired width of the SVG */
+  height: auto; /* Maintain aspect ratio */
+  object-fit: contain; /* Ensure the SVG fits its container */
+}
+
+.google-button-text {
+  display: flex; /* Aligns text with the logo */
+}

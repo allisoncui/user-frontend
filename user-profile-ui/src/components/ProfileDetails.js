@@ -90,9 +90,9 @@ const ProfileDetails = () => {
           <AllRestaurants username={profile?.username} />
         </div>
 
-        {/* Right Column: Viewed Restaurants */}
+        {/* Right Column: Favorited Restaurants */}
         <div className="profile-column">
-          <h3>Viewed Restaurants</h3>
+          <h3>Favorited Restaurants</h3>
           <ul className="viewed-restaurants-list">
             {viewedRestaurants?.map((restaurant) => (
               <li key={restaurant.restaurant_code} className="viewed-restaurant-item">

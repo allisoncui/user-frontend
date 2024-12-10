@@ -67,6 +67,8 @@ const AllRestaurants = ({ username }) => {
   ];
 
   const [selectedRestaurants, setSelectedRestaurants] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const fetchViewedRestaurants = useCallback(async () => {
     try {
@@ -96,7 +98,7 @@ const AllRestaurants = ({ username }) => {
 
     try {
       const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
-      const url = `${restaurantMicroserviceUrl}/user/${username}/viewed_restaurant?restaurant_code=${code}`;
+      const url = `${restaurantMicroserviceUrl}/user/${username}/viewed_restaurants?restaurant_code=${code}`;
 
       if (isSelected) {
         await axios.delete(url);
@@ -108,25 +110,94 @@ const AllRestaurants = ({ username }) => {
     }
   };
 
+  // Pagination calculations
+  const totalPages = Math.ceil(restaurants.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentRestaurants = restaurants.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Pagination controls
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleItemsPerPageChange = (event) => {
+    const newItemsPerPage = parseInt(event.target.value);
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Reset to first page when changing items per page
+  };
+
   if (!username) {
     return <p style={{ color: "red" }}>No username provided. Please log in first.</p>;
   }
 
   return (
-    <div>
-      <h3>All Available Restaurants</h3>
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        {restaurants.map((restaurant) => (
-          <div key={restaurant.code} style={{ display: "flex", alignItems: "center" }}>
-            <span>{restaurant.name}</span>
-            <input
-              type="checkbox"
-              style={{ marginLeft: "10px" }}
-              checked={selectedRestaurants.includes(Number(restaurant.code))}
-              onChange={() => handleCheckboxChange(Number(restaurant.code))}
-            />
+    <div className="p-4">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-xl font-bold">All Available Restaurants</h3>
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-2">
+            Items per page:
+            <select 
+              value={itemsPerPage} 
+              onChange={handleItemsPerPageChange}
+              className="border rounded p-1"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+          </label>
+          <div className="text-sm">
+            Page {currentPage} of {totalPages}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2 mb-4">
+        {currentRestaurants.map((restaurant) => (
+          <div key={restaurant.code} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+            <span className="font-medium">{restaurant.name}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">Code: {restaurant.code}</span>
+              <input
+                type="checkbox"
+                className="w-4 h-4"
+                checked={selectedRestaurants.includes(Number(restaurant.code))}
+                onChange={() => handleCheckboxChange(Number(restaurant.code))}
+              />
+            </div>
           </div>
         ))}
+      </div>
+
+      <div className="flex justify-center gap-2">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+          <button
+            key={pageNumber}
+            onClick={() => handlePageChange(pageNumber)}
+            className={`px-3 py-1 border rounded ${
+              pageNumber === currentPage ? 'bg-blue-500 text-white' : ''
+            }`}
+          >
+            {pageNumber}
+          </button>
+        ))}
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </div>
   );
