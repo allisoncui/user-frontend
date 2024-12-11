@@ -71,7 +71,9 @@
     display: flex;
     flex-direction: column;
     padding-left: 0; /* Removes left padding from details */
-    margin-left: 0; /* Ensures no extra margin */
+    margin-left: 20px;
+    margin-top: 10px;
+    min-width: 250px;
   }
   
   .restaurant-name {

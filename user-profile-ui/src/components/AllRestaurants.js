@@ -157,7 +157,7 @@ const AllRestaurants = ({ username }) => {
       </div>
 
       <div className="all-restaurants-container">
-      {restaurants.map((restaurant) => (
+      {currentRestaurants.map((restaurant) => (
         <div key={restaurant.code} className="restaurant-item">
           <div className="restaurant-details">
             <span className="restaurant-name">{restaurant.name}</span>
