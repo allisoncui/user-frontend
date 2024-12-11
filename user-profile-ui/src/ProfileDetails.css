@@ -86,4 +86,8 @@
   
   .restaurant-checkbox {
     margin-left: 15px; /* Space between the details and the checkbox */
+    width: 16px; /* Set the desired width */
+    height: 16px; /* Set the desired height */
+    border-radius: 2px;
+    cursor: pointer; /* Optional: Changes the cursor to a pointer for better UX */
   }
