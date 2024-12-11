@@ -14,7 +14,7 @@ const RegisterUser = () => {
       if (response.status === 201) {
         setMessage("User registered successfully");
       } else if (response.status === 200) {
-        setMessage("User already exists");
+        setMessage("User already exists!!");
       }
     } catch (error) {
       setMessage(error.response.data.detail || "Error registering user");
@@ -31,8 +31,8 @@ const RegisterUser = () => {
     <div>
       {/* <h2>Register User</h2> */}
       <button onClick={handleGoogleLogin} className="google-button">
-      <img src={googleLogo} alt="Google logo" className="google-logo" />
-      <span className="google-button-text">Register with Google</span>
+        <img src={googleLogo} alt="Google logo" className="google-logo" />
+        <span className="google-button-text">Register with Google</span>
       </button>
       <div style={{ paddingTop: '20px' }}>
         <h3>Register New User</h3>
