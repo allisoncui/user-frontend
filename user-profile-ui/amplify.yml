@@ -19,3 +19,7 @@ applications:
       cache:
         paths:
           - node_modules/**/*
+      redirects:
+      - source: "/api/<*>"
+        target: "https://1mymmsq7d6.execute-api.us-east-1.amazonaws.com/<*>"
+        type: "200"
