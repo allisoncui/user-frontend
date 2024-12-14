@@ -19,7 +19,7 @@ function App() {
             element={
               <>
                 <h1>Welcome to Bro Knows a Spot</h1>
-                <div class="home-description">
+                <div className="home-description">
                   This cloud-based application helps Resy users search across restaurants and have an easier time securing the reservations they desire. <br></br><br></br>
                   Semester project for COMS4153.
                 </div>

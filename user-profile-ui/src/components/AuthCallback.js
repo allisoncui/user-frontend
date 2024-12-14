@@ -10,8 +10,8 @@ const AuthCallback = () => {
     const username = params.get("username");
 
     if (token && username) {
-      localStorage.setItem("authToken", token); // Store token securely
-      navigate(`/profile/${username}`); // Redirect to profile page with username
+      localStorage.setItem("authToken", token);
+      navigate(`/profile/${username}`, { state: { username } });
     } else {
       console.error("Token or username missing in callback");
     }
