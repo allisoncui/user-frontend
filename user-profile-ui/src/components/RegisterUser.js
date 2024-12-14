@@ -24,7 +24,8 @@ const RegisterUser = () => {
 
   const handleGoogleLogin = () => {
     // Redirects to the backend's Google login endpoint
-    window.location.href = 'http://localhost:8000/login/google';
+    const backendUrl = process.env.REACT_APP_USER_BACKEND_URL || 'http://54.84.95.39:3000';
+    window.location.href = `${backendUrl}/login/google`;
   };
 
   return (
