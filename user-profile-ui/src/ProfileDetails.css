@@ -40,7 +40,7 @@
     padding-right: 48px;
     border-radius: 8px;
     background-color: #fbfbfb;
-    box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15);
+    box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.1);
   }
   
   .restaurant-details {
@@ -68,7 +68,7 @@
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #ddd; 
-    padding-bottom: 10px; 
+    padding-bottom: 20px; 
   }
   
   .restaurant-details {
@@ -108,14 +108,14 @@
   justify-content: center;
   flex-wrap: nowrap; 
   gap: 8px;
-  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Individual pagination button */
 button {
   min-width: 40px; 
   text-align: center;
-  border: 1px solid #ddd;
+  border: 1px solid #666;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -132,4 +132,19 @@ button.bg-black {
 button.bg-black.text-white {
   color: #fff;
   background-color: #000;
+}
+
+.all-title-info {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  padding-bottom: 20px
+}
+
+.left {
+  text-align: left;
+}
+
+.right {
+  text-align: right;
 }

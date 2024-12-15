@@ -114,7 +114,7 @@ const ProfileDetails = () => {
           className="back-to-home-button"
           onClick={() => navigate("/")}
         >
-          Back to Home
+          Sign Out
         </button>
       </div>
       <div className="profile-details-columns">

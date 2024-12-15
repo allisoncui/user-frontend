@@ -155,13 +155,13 @@ const AllRestaurants = ({ username }) => {
 
   // Main render
   return (
-    <div className="p-4">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="all-restaurants-full-col">
+      <div>
         <h3 className="text-xl font-bold">All Available Restaurants</h3>
-        <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2">
+        <div className="all-title-info">
+          <label className="num-items">
             Items per page:
-            <select
+            <select 
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
               className="border rounded p-1"
@@ -172,7 +172,7 @@ const AllRestaurants = ({ username }) => {
               <option value={50}>50</option>
             </select>
           </label>
-          <div className="text-sm">Page {currentPage} of {totalPages}</div>
+          <div className="num-page">Page {currentPage} of {totalPages}</div>
         </div>
       </div>
 
