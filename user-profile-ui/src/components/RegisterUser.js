@@ -23,10 +23,9 @@ const RegisterUser = () => {
   };
 
   const handleGoogleLogin = () => {
-    const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-    const redirectUri = `${window.location.origin}/auth/callback`;
-    const googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=openid%20email%20profile`;
-    window.location.href = googleOAuthUrl;
+    // Redirects to the backend's Google login endpoint
+    const backendUrl = process.env.REACT_APP_USER_BACKEND_URL || 'http://54.84.95.39:3000';
+    window.location.href = `${backendUrl}/login/google`;
   };
 
   return (
