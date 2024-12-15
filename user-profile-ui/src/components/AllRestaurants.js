@@ -1,14 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-// import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../ProfileDetails.css";
 
 const AllRestaurants = ({ username }) => {
-  // const navigate = useNavigate();
-  // const location = useLocation();
-  // const { username } = location.state || {};
-
-  // List of restaurants and their codes
   const restaurants = [
     { name: 'Seoul Salon', code: '69593' },
     { name: 'Tatiana by Kwame Onwuachi', code: '65452' },
@@ -71,6 +65,7 @@ const AllRestaurants = ({ username }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  // Fetch user-viewed restaurants
   const fetchViewedRestaurants = useCallback(async () => {
     try {
       const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
@@ -88,7 +83,7 @@ const AllRestaurants = ({ username }) => {
     }
   }, [username, fetchViewedRestaurants]);
 
-  // Handle checkbox change event
+  // Handle checkbox changes
   const handleCheckboxChange = async (code) => {
     const isSelected = selectedRestaurants.includes(code);
     const updatedRestaurants = isSelected
@@ -117,30 +112,57 @@ const AllRestaurants = ({ username }) => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentRestaurants = restaurants.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Pagination controls
+  // **NEW CODE: Pagination logic to display ellipsis for large page numbers**
+  const generatePageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      const leftSide = Math.max(1, currentPage - 2);
+      const rightSide = Math.min(totalPages, currentPage + 2);
+
+      if (leftSide > 1) pageNumbers.push(1); // Always show first page
+      if (leftSide > 2) pageNumbers.push("..."); // Left ellipsis
+
+      for (let i = leftSide; i <= rightSide; i++) {
+        pageNumbers.push(i);
+      }
+
+      if (rightSide < totalPages - 1) pageNumbers.push("..."); // Right ellipsis
+      if (rightSide < totalPages) pageNumbers.push(totalPages); // Always show last page
+    }
+
+    return pageNumbers;
+  };
+
+  const pageNumbers = generatePageNumbers();
+
+  // Handle page changes
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    if (typeof pageNumber === "number") {
+      setCurrentPage(pageNumber);
+    }
   };
 
   const handleItemsPerPageChange = (event) => {
-    const newItemsPerPage = parseInt(event.target.value);
-    setItemsPerPage(newItemsPerPage);
-    setCurrentPage(1); // Reset to first page when changing items per page
+    setItemsPerPage(parseInt(event.target.value));
+    setCurrentPage(1);
   };
 
-  if (!username) {
-    return <p style={{ color: "red" }}>No username provided. Please log in first.</p>;
-  }
-
+  // Main render
   return (
-    <div className="p-4">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="all-restaurants-full-col">
+      <div>
         <h3 className="text-xl font-bold">All Available Restaurants</h3>
-        <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2">
+        <div className="all-title-info">
+          <label className="num-items">
             Items per page:
             <select 
-              value={itemsPerPage} 
+              value={itemsPerPage}
               onChange={handleItemsPerPageChange}
               className="border rounded p-1"
             >
@@ -150,54 +172,56 @@ const AllRestaurants = ({ username }) => {
               <option value={50}>50</option>
             </select>
           </label>
-          <div className="text-sm">
-            Page {currentPage} of {totalPages}
-          </div>
+          <div className="num-page">Page {currentPage} of {totalPages}</div>
         </div>
       </div>
 
       <div className="all-restaurants-container">
-      {currentRestaurants.map((restaurant) => (
-        <div key={restaurant.code} className="restaurant-item">
-          <div className="restaurant-details">
-            <span className="restaurant-name">{restaurant.name}</span>
-            <span className="restaurant-code">Code: {restaurant.code}</span>
+        {currentRestaurants.map((restaurant) => (
+          <div key={restaurant.code} className="restaurant-item">
+            <div className="restaurant-details">
+              <span className="restaurant-name">{restaurant.name}</span>
+              <span className="restaurant-code">Code: {restaurant.code}</span>
+            </div>
+            <input
+              type="checkbox"
+              className="restaurant-checkbox"
+              checked={selectedRestaurants.includes(Number(restaurant.code))}
+              onChange={() => handleCheckboxChange(Number(restaurant.code))}
+            />
           </div>
-          <input
-            type="checkbox"
-            className="restaurant-checkbox"
-            checked={selectedRestaurants.includes(Number(restaurant.code))}
-            onChange={() => handleCheckboxChange(Number(restaurant.code))}
-          />
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
 
-      <div className="flex justify-center gap-2">
+      {/* **NEW CODE: Updated pagination buttons with ellipsis display** */}
+      <div className="pagination-container">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className="px-3 py-1 border rounded disabled:opacity-50"
         >
-          Previous
+          &lt;
         </button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+
+        {pageNumbers.map((pageNumber, index) => (
           <button
-            key={pageNumber}
+            key={index}
             onClick={() => handlePageChange(pageNumber)}
             className={`px-3 py-1 border rounded ${
-              pageNumber === currentPage ? 'bg-blue-500 text-white' : ''
+              pageNumber === currentPage ? "bg-black text-white" : "hover:bg-gray-100"
             }`}
+            disabled={pageNumber === "..."}
           >
             {pageNumber}
           </button>
         ))}
+
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
           className="px-3 py-1 border rounded disabled:opacity-50"
         >
-          Next
+          &gt;
         </button>
       </div>
     </div>
@@ -205,4 +229,3 @@ const AllRestaurants = ({ username }) => {
 };
 
 export default AllRestaurants;
-

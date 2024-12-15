@@ -6,6 +6,7 @@ import ViewAvailabilities from "./components/ViewAvailabilities";
 import AllRestaurants from "./components/AllRestaurants";
 import AuthCallback from "./components/AuthCallback";
 import ProfileDetails from "./components/ProfileDetails";
+import broBird from "./bro_bird.png";
 import './App.css';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
             path="/"
             element={
               <>
+                <img src={broBird} alt="A bird" style={{ width: '175px', height: 'auto'  }} />
                 <h1>Welcome to Bro Knows a Spot</h1>
                 <div className="home-description">
                   This cloud-based application helps Resy users search across restaurants and have an easier time securing the reservations they desire. <br></br><br></br>

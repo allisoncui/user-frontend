@@ -29,7 +29,7 @@ p {
 }
 
 .home-description {
-  width: 35%;
+  max-width: 500px;
   padding-top: 20px;
   padding-bottom: 36px;
 }
@@ -38,7 +38,7 @@ p {
   display: flex;
   margin: 0 auto;
   align-items: center;
-  gap: 4px; /* Adds spacing between the logo and text */
+  gap: 4px; 
   padding: 10px 28px;
   background-color: white;
   border: 1px solid #666;
@@ -56,11 +56,11 @@ p {
 }
 
 .google-logo {
-  width: 40px; /* Set the desired width of the SVG */
-  height: auto; /* Maintain aspect ratio */
-  object-fit: contain; /* Ensure the SVG fits its container */
+  width: 40px; 
+  height: auto; 
+  object-fit: contain; 
 }
 
 .google-button-text {
-  display: flex; /* Aligns text with the logo */
+  display: flex; 
 }

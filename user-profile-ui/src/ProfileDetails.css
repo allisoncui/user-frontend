@@ -11,7 +11,7 @@
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
-    text-align: left; /* Aligns the username's Profile header to the left */
+    text-align: left; 
   }
   
   .profile-details-columns {
@@ -21,6 +21,9 @@
   
   .profile-column {
     text-align: left;
+    width: 450px; 
+    min-width: 450px; 
+    max-width: 450px; 
   }
   
   .viewed-restaurants-list {
@@ -37,6 +40,7 @@
     padding-right: 48px;
     border-radius: 8px;
     background-color: #fbfbfb;
+    box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.1);
   }
   
   .restaurant-details {
@@ -56,21 +60,21 @@
   .all-restaurants-container {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Space between restaurant entries */
+    gap: 15px; 
   }
   
   .restaurant-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ddd; /* Optional: Adds a separator */
-    padding-bottom: 10px; /* Space below each entry */
+    border-bottom: 1px solid #ddd; 
+    padding-bottom: 20px; 
   }
   
   .restaurant-details {
     display: flex;
     flex-direction: column;
-    padding-left: 0; /* Removes left padding from details */
+    padding-left: 0; 
     margin-left: 20px;
     margin-top: 10px;
     min-width: 250px;
@@ -78,18 +82,69 @@
   
   .restaurant-name {
     font-weight: bold;
-    margin-bottom: 5px; /* Space between name and code */
+    margin-bottom: 5px; 
   }
   
   .restaurant-code {
-    font-size: 0.9em; /* Slightly smaller font for the code */
-    color: #666; /* Optional: Light gray color for the code */
+    font-size: 0.9em; 
+    color: #666; 
   }
   
   .restaurant-checkbox {
-    margin-left: 15px; /* Space between the details and the checkbox */
-    width: 16px; /* Set the desired width */
-    height: 16px; /* Set the desired height */
+    margin-left: 15px; 
+    width: 16px; 
+    height: 16px; 
     border-radius: 2px;
-    cursor: pointer; /* Optional: Changes the cursor to a pointer for better UX */
+    cursor: pointer; 
   }
+
+  /* Pagination container */
+.pagination-container {
+  background-color: #fff;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap; 
+  gap: 8px;
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Individual pagination button */
+button {
+  min-width: 40px; 
+  text-align: center;
+  border: 1px solid #666;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #f3f4f6; 
+}
+
+button.bg-black {
+  border: 1px solid #000;
+}
+
+button.bg-black.text-white {
+  color: #fff;
+  background-color: #000;
+}
+
+.all-title-info {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  padding-bottom: 20px
+}
+
+.left {
+  text-align: left;
+}
+
+.right {
+  text-align: right;
+}
