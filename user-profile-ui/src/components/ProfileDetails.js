@@ -12,6 +12,60 @@ const ProfileDetails = () => {
 
   const [profile, setProfile] = useState(initialProfile || null);
   const [viewedRestaurants, setViewedRestaurants] = useState(initialViewedRestaurants || []);
+  const [restaurantDetails, setRestaurantDetails] = useState({});
+
+  const fetchViewedRestaurants = async (username) => {
+    try {
+      const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
+      const response = await axios.get(`${restaurantMicroserviceUrl}/user/${username}/viewed_restaurants`);
+      setViewedRestaurants(response.data.viewed_restaurants || []);
+    } catch (error) {
+      console.error("Error fetching viewed restaurants:", error);
+    }
+  };
+
+  const fetchAvailabilityAndRating = async (restaurant) => {
+    try {
+      const availabilityMicroserviceUrl = process.env.REACT_APP_AVAILABILITY_MICROSERVICE_URL;
+      const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
+
+      // Fetch availability
+      const availabilityResponse = await axios.post(
+        `${availabilityMicroserviceUrl}/availability/${restaurant.restaurant_code}`
+      );
+      const statusUrl = availabilityResponse.data._links?.status;
+
+      const availabilityData = statusUrl
+        ? await new Promise((resolve, reject) => {
+            const intervalId = setInterval(async () => {
+              try {
+                const response = await axios.get(`${statusUrl}`);
+                if (response.data.status === "complete") {
+                  clearInterval(intervalId);
+                  resolve(response.data.data);
+                }
+              } catch (error) {
+                clearInterval(intervalId);
+                reject(error);
+              }
+            }, 5000); // Check status every 5 seconds
+          })
+        : null;
+
+      // Fetch rating
+      const ratingResponse = await axios.get(
+        `${restaurantMicroserviceUrl}/restaurant/${restaurant.restaurant_code}/rating`
+      );
+
+      return {
+        availability: availabilityData,
+        rating: ratingResponse.data.rating,
+      };
+    } catch (error) {
+      console.error("Error fetching availability or rating for restaurant:", error);
+      return { error: "Failed to fetch availability or rating." };
+    }
+  };
 
   useEffect(() => {
     const fetchProfileAndRestaurants = async () => {
@@ -23,11 +77,7 @@ const ProfileDetails = () => {
         }
 
         if (viewedRestaurants.length === 0) {
-          const restaurantMicroserviceUrl = process.env.REACT_APP_RESTAURANT_MICROSERVICE_URL;
-          const restaurantsResponse = await axios.get(
-            `${restaurantMicroserviceUrl}/user/${paramUsername}/viewed_restaurants`
-          );
-          setViewedRestaurants(restaurantsResponse.data.viewed_restaurants || []);
+          fetchViewedRestaurants(paramUsername);
         }
       } catch (error) {
         console.error("Error fetching profile or restaurants:", error);
@@ -37,6 +87,20 @@ const ProfileDetails = () => {
 
     fetchProfileAndRestaurants();
   }, [paramUsername, profile, viewedRestaurants.length, navigate]);
+
+  useEffect(() => {
+    if (viewedRestaurants.length > 0) {
+      const fetchDetails = async () => {
+        const details = {};
+        for (const restaurant of viewedRestaurants) {
+          details[restaurant.restaurant_code] = await fetchAvailabilityAndRating(restaurant);
+        }
+        setRestaurantDetails(details);
+      };
+
+      fetchDetails();
+    }
+  }, [viewedRestaurants]);
 
   if (!profile) {
     return <p>Loading profile...</p>;
@@ -63,6 +127,35 @@ const ProfileDetails = () => {
             {viewedRestaurants.map((restaurant) => (
               <li key={restaurant.restaurant_code} className="viewed-restaurant-item">
                 <strong>{restaurant.name}</strong> (Code: {restaurant.restaurant_code})
+                <div className="restaurant-details">
+                  {restaurantDetails[restaurant.restaurant_code]?.availability ? (
+                    restaurantDetails[restaurant.restaurant_code].availability.date &&
+                    restaurantDetails[restaurant.restaurant_code].availability.time ? (
+                      <div>
+                        <p><strong>First available reservation:</strong></p>
+                        <p>Date: {restaurantDetails[restaurant.restaurant_code].availability.date}</p>
+                        <p>Time: {restaurantDetails[restaurant.restaurant_code].availability.time}</p>
+                      </div>
+                    ) : (
+                      <p>No reservations available</p>
+                    )
+                  ) : (
+                    <p className="loading-text">Loading availability...</p>
+                  )}
+
+                  {restaurantDetails[restaurant.restaurant_code]?.rating !== undefined ? (
+                    <div>
+                      <h4>Restaurant Rating</h4>
+                      <p>Rating: {restaurantDetails[restaurant.restaurant_code].rating}</p>
+                    </div>
+                  ) : (
+                    <p>Loading rating...</p>
+                  )}
+
+                  {restaurantDetails[restaurant.restaurant_code]?.error && (
+                    <p className="error-text">{restaurantDetails[restaurant.restaurant_code].error}</p>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
