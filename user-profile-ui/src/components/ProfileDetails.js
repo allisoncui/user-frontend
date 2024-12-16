@@ -126,7 +126,7 @@ const ProfileDetails = () => {
           <ul className="viewed-restaurants-list">
             {viewedRestaurants.map((restaurant) => (
               <li key={restaurant.restaurant_code} className="viewed-restaurant-item">
-                <strong>{restaurant.name}</strong> (Code: {restaurant.restaurant_code})
+                <strong>{restaurant.name}</strong> 
                 <div className="restaurant-details">
                   {restaurantDetails[restaurant.restaurant_code]?.availability ? (
                     restaurantDetails[restaurant.restaurant_code].availability.date &&
