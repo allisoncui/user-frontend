@@ -48,7 +48,7 @@ const ProfileDetails = () => {
                 clearInterval(intervalId);
                 reject(error);
               }
-            }, 5000); // Check status every 5 seconds
+            }, 60000); // Check status every minute
           })
         : null;
 
@@ -67,6 +67,7 @@ const ProfileDetails = () => {
     }
   };
 
+  // Fetch profile and initial viewed restaurants
   useEffect(() => {
     const fetchProfileAndRestaurants = async () => {
       try {
@@ -76,9 +77,7 @@ const ProfileDetails = () => {
           setProfile(userResponse.data);
         }
 
-        if (viewedRestaurants.length === 0) {
-          fetchViewedRestaurants(paramUsername);
-        }
+        fetchViewedRestaurants(paramUsername);
       } catch (error) {
         console.error("Error fetching profile or restaurants:", error);
         navigate("/"); // Redirect to home if data fetch fails
@@ -86,8 +85,20 @@ const ProfileDetails = () => {
     };
 
     fetchProfileAndRestaurants();
-  }, [paramUsername, profile, viewedRestaurants.length, navigate]);
+  }, [paramUsername, profile, navigate]);
 
+  // Poll for updated viewedRestaurants
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (profile?.username) {
+        fetchViewedRestaurants(profile.username);
+      }
+    }, 3000); // Poll every 3 seconds
+
+    return () => clearInterval(intervalId); // Cleanup on component unmount
+  }, [profile?.username]);
+
+  // Fetch availability and ratings when viewedRestaurants changes
   useEffect(() => {
     if (viewedRestaurants.length > 0) {
       const fetchDetails = async () => {
