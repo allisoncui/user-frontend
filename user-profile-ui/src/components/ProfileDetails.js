@@ -48,7 +48,7 @@ const ProfileDetails = () => {
                 clearInterval(intervalId);
                 reject(error);
               }
-            }, 60000); // Check status every minute
+            }, 5000); // Check status every minute
           })
         : null;
 
